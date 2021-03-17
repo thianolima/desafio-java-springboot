@@ -4,6 +4,7 @@ import br.com.desafiojavaspringboot.entities.Product;
 import br.com.desafiojavaspringboot.vos.ProductVO;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class ProductTemplate extends BaseTemplate{
                 .id(faker.random().nextLong())
                 .name(faker.beer().name())
                 .description(faker.beer().style())
-                .price(faker.number().randomNumber())
+                .price(new BigDecimal(Math.random()))
                 .build();
     }
 

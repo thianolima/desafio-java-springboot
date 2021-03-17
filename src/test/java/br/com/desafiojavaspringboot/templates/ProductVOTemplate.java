@@ -1,8 +1,9 @@
 package br.com.desafiojavaspringboot.templates;
 
-import br.com.desafiojavaspringboot.dtos.ProductDTO;
 import br.com.desafiojavaspringboot.vos.ProductVO;
 import lombok.Getter;
+
+import java.math.BigDecimal;
 
 public class ProductVOTemplate extends BaseTemplate{
 
@@ -13,7 +14,7 @@ public class ProductVOTemplate extends BaseTemplate{
         return ProductVO.builder()
                 .name(faker.beer().name())
                 .description(faker.beer().style())
-                .price(faker.number().randomNumber())
+                .price(new BigDecimal(Math.random()))
                 .build();
     }
 }

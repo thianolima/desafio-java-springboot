@@ -4,6 +4,7 @@ import br.com.desafiojavaspringboot.entities.Product;
 import br.com.desafiojavaspringboot.services.ProductService;
 import br.com.desafiojavaspringboot.templates.ProductTemplate;
 import br.com.desafiojavaspringboot.templates.ProductVOTemplate;
+import br.com.desafiojavaspringboot.vos.ProductFilterVO;
 import br.com.desafiojavaspringboot.vos.ProductVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -22,9 +23,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,6 +67,75 @@ public class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("POST/products - Nao deve salvar um novo produto com nome invalido.")
+    public void insertInvalidNameTest() throws Exception {
+        ProductVO vo = ProductVOTemplate.getInstance().getObjectValid();
+        vo.setName("");
+        Product product = ProductTemplate.getInstance().getObjectValid();
+
+        BDDMockito.given(service.save(Mockito.any(Product.class))).willReturn(product);
+
+        String json = new ObjectMapper().writeValueAsString(vo);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message").value("Obrigatório preenchimento do campo name!"))
+                .andExpect(jsonPath("$[*].status_code").value(400));
+    }
+
+    @Test
+    @DisplayName("POST/products - Nao deve salvar um novo produto com descricao invalida.")
+    public void insertInvalidDescriptionTest() throws Exception {
+        ProductVO vo = ProductVOTemplate.getInstance().getObjectValid();
+        vo.setDescription("");
+        Product product = ProductTemplate.getInstance().getObjectValid();
+
+        BDDMockito.given(service.save(Mockito.any(Product.class))).willReturn(product);
+
+        String json = new ObjectMapper().writeValueAsString(vo);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message").value("Obrigatório preenchimento do campo description!"))
+                .andExpect(jsonPath("$[*].status_code").value(400));
+    }
+
+    @Test
+    @DisplayName("POST/products - Nao deve salvar um novo produto com price invalida.")
+    public void insertInvalidPriceTest() throws Exception {
+        ProductVO vo = ProductVOTemplate.getInstance().getObjectValid();
+        vo.setPrice(new BigDecimal(-1));
+        Product product = ProductTemplate.getInstance().getObjectValid();
+
+        BDDMockito.given(service.save(Mockito.any(Product.class))).willReturn(product);
+
+        String json = new ObjectMapper().writeValueAsString(vo);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message").value("O valor do campo price deve ser maior do que zero!"))
+                .andExpect(jsonPath("$[*].status_code").value(400));
+    }
+
+    @Test
     @DisplayName("GET/products - Deve retornar todos os produtos cadastrados.")
     public void findByIdTest() throws Exception {
         List<Product> products = ProductTemplate.getInstance().getListValid();
@@ -86,8 +157,8 @@ public class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("GET/products/{id} - Deve retornar produto pelo id.")
-    public void findAll() throws Exception {
+    @DisplayName("GET/products/{id} - Deve retornar todos os produtos.")
+    public void findAllTest() throws Exception {
         Product product = ProductTemplate.getInstance().getObjectValid();
 
         BDDMockito.given(service.findById(Mockito.anyLong())).willReturn(product);
@@ -103,6 +174,27 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("name").value(product.getName()))
                 .andExpect(jsonPath("description").value(product.getDescription()))
                 .andExpect(jsonPath("price").value(product.getPrice()));
+    }
+
+    @Test
+    @DisplayName("GET//products/search?min_price=10.5&max_price=50&q=superget - Deve retornar os produtos que condizem com a pesquisa avancada.")
+    public void searchTest() throws Exception {
+        List<Product> products = ProductTemplate.getInstance().getListValid();
+
+        BDDMockito.given(service.search(Mockito.any(ProductFilterVO.class))).willReturn(products);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/products/search?min_price=10.5&max_price=50&q=superget")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(100)))
+                .andExpect(jsonPath("$[0].id").isNotEmpty())
+                .andExpect(jsonPath("$[0].name").isNotEmpty())
+                .andExpect(jsonPath("$[0].description").isNotEmpty())
+                .andExpect(jsonPath("$[0].price").isNotEmpty());
     }
 
     @Test

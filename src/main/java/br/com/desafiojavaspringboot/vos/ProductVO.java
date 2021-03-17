@@ -6,8 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -16,14 +18,14 @@ import javax.validation.constraints.PositiveOrZero;
 public class ProductVO {
 
     @ApiModelProperty(example = "PILHA DURACEL AA", required = true)
-    @NotNull
+    @NotBlank
     String name;
 
     @ApiModelProperty(example = "PILHA ALCALINA DE LONGA DURAÇÃO", required = true)
-    @NotNull
+    @NotBlank
     String description;
 
     @ApiModelProperty(example = "4.85", required = true)
     @PositiveOrZero
-    Number price;
+    BigDecimal price;
 }

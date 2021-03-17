@@ -3,6 +3,8 @@ package br.com.desafiojavaspringboot.templates;
 import br.com.desafiojavaspringboot.dtos.ProductDTO;
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 public class ProductDTOTemplate extends BaseTemplate{
 
     @Getter
@@ -13,7 +15,7 @@ public class ProductDTOTemplate extends BaseTemplate{
                 .id(faker.random().nextLong())
                 .name(faker.beer().name())
                 .description(faker.beer().style())
-                .price(faker.number().randomNumber())
+                .price(new BigDecimal(Math.random()))
                 .build();
     }
 }

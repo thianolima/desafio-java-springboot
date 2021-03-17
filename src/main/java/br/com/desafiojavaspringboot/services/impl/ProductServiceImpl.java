@@ -3,7 +3,8 @@ package br.com.desafiojavaspringboot.services.impl;
 import br.com.desafiojavaspringboot.entities.Product;
 import br.com.desafiojavaspringboot.repositories.ProductRepository;
 import br.com.desafiojavaspringboot.services.ProductService;
-import br.com.desafiojavaspringboot.vos.ProductVO;
+import br.com.desafiojavaspringboot.specifications.ProductSpecification;
+import br.com.desafiojavaspringboot.vos.ProductFilterVO;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +49,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> findAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public List<Product> search(ProductFilterVO filter) {
+        return repository.findAll(new ProductSpecification(filter));
     }
 }

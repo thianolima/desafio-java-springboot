@@ -3,7 +3,9 @@ package br.com.desafiojavaspringboot.services;
 import br.com.desafiojavaspringboot.entities.Product;
 import br.com.desafiojavaspringboot.repositories.ProductRepository;
 import br.com.desafiojavaspringboot.services.impl.ProductServiceImpl;
+import br.com.desafiojavaspringboot.specifications.ProductSpecification;
 import br.com.desafiojavaspringboot.templates.ProductTemplate;
+import br.com.desafiojavaspringboot.vos.ProductFilterVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +51,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Deve econtrar um produto por sku")
+    @DisplayName("Deve econtrar um produto por id")
     public void findByIdTest() {
         Product product = ProductTemplate.getInstance().getObjectValid();
 
@@ -64,7 +66,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Deve econtrar um produto por sku")
+    @DisplayName("Deve retornar todos os produtos cadastrados.")
     public void findAllTest() {
         List<Product> products = ProductTemplate.getInstance().getListValid();
 
@@ -74,6 +76,19 @@ public class ProductServiceTest {
                 .assertDoesNotThrow(() -> service.findAll());
 
         Mockito.verify(repository, Mockito.times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("Deve retornar todos os produtos cadastrados.")
+    public void searchTest() {
+        List<Product> products = ProductTemplate.getInstance().getListValid();
+
+        Mockito.when(repository.findAll(Mockito.any(ProductSpecification.class))).thenReturn(products);
+
+        org.junit.jupiter.api.Assertions
+                .assertDoesNotThrow(() -> service.search(Mockito.any(ProductFilterVO.class)));
+
+        Mockito.verify(repository, Mockito.times(1)).findAll(Mockito.any(ProductSpecification.class));
     }
 
     @Test

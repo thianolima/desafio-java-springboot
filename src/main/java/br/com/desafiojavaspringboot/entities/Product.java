@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -25,5 +26,5 @@ public class Product {
 
     String name;
     String description;
-    Number price;
+    BigDecimal price;
 }

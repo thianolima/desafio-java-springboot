@@ -3,6 +3,7 @@ package br.com.desafiojavaspringboot.controllers;
 import br.com.desafiojavaspringboot.dtos.ProductDTO;
 import br.com.desafiojavaspringboot.entities.Product;
 import br.com.desafiojavaspringboot.services.ProductService;
+import br.com.desafiojavaspringboot.vos.ProductFilterVO;
 import br.com.desafiojavaspringboot.vos.ProductVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,7 +49,7 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    @ApiOperation("Pesquisar")
+    @ApiOperation("Pesquisar pelo id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Produto encontrado."),
             @ApiResponse(code = 404, message = "Produto não encontrado.")
@@ -65,6 +66,26 @@ public class ProductController {
     })
     public ResponseEntity<List<ProductDTO>> findById(){
         List<Product> result = service.findAll();
+
+        if (result.size() > 0 || result == null){
+            ResponseEntity.notFound();
+        }
+
+        List<ProductDTO> resultDto = result.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resultDto);
+    }
+
+    @GetMapping("/search")
+    @ApiOperation("Consultar")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Produto encontrado."),
+            @ApiResponse(code = 404, message = "Produto não encontrado.")
+    })
+    public ResponseEntity<List<ProductDTO>> search(ProductFilterVO filter){
+        List<Product> result = service.search(filter);
 
         if (result.size() > 0 || result == null){
             ResponseEntity.notFound();
