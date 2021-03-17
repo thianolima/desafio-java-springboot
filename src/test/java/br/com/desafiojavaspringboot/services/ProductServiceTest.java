@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,7 +59,21 @@ public class ProductServiceTest {
         org.junit.jupiter.api.Assertions
                 .assertDoesNotThrow(() -> service.findById(product.getId()));
 
-        Mockito.verify(repository, Mockito.times(1)).findById(Mockito.anyLong());
+        Mockito.verify(repository, Mockito.times(1))
+                .findById(Mockito.anyLong());
+    }
+
+    @Test
+    @DisplayName("Deve econtrar um produto por sku")
+    public void findAllTest() {
+        List<Product> products = ProductTemplate.getInstance().getListValid();
+
+        Mockito.when(repository.findAll()).thenReturn(products);
+
+        org.junit.jupiter.api.Assertions
+                .assertDoesNotThrow(() -> service.findAll());
+
+        Mockito.verify(repository, Mockito.times(1)).findAll();
     }
 
     @Test
@@ -72,7 +87,8 @@ public class ProductServiceTest {
         org.junit.jupiter.api.Assertions
                 .assertDoesNotThrow(() -> service.delete(product.getId()));
 
-        Mockito.verify(repository, Mockito.times(1)).delete(Mockito.any(Product.class));
+        Mockito.verify(repository, Mockito.times(1))
+                .delete(Mockito.any(Product.class));
     }
 
     @Test

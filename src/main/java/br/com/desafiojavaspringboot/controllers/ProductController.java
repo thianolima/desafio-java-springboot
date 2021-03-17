@@ -18,6 +18,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -53,6 +55,26 @@ public class ProductController {
     })
     public ResponseEntity<ProductDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok(modelMapper.map(service.findById(id), ProductDTO.class));
+    }
+
+    @GetMapping
+    @ApiOperation("Listar")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Produto encontrado."),
+            @ApiResponse(code = 404, message = "Produto não encontrado.")
+    })
+    public ResponseEntity<List<ProductDTO>> findById(){
+        List<Product> result = service.findAll();
+
+        if (result.size() > 0 || result == null){
+            ResponseEntity.notFound();
+        }
+
+        List<ProductDTO> resultDto = result.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resultDto);
     }
 
     @DeleteMapping("{id}")

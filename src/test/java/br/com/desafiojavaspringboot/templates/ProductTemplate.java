@@ -4,6 +4,9 @@ import br.com.desafiojavaspringboot.entities.Product;
 import br.com.desafiojavaspringboot.vos.ProductVO;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProductTemplate extends BaseTemplate{
 
     @Getter
@@ -16,5 +19,13 @@ public class ProductTemplate extends BaseTemplate{
                 .description(faker.beer().style())
                 .price(faker.number().randomNumber())
                 .build();
+    }
+
+    public List<Product> getListValid(){
+        List<Product> products = new ArrayList<>();
+        for(int i=0; i<100; i++){
+            products.add(ProductTemplate.getInstance().getObjectValid());
+        }
+        return products;
     }
 }

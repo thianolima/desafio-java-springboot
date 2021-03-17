@@ -7,6 +7,8 @@ import br.com.desafiojavaspringboot.vos.ProductVO;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -41,5 +43,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product update(Product product, Long id) {
         return repository.save(product);
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return repository.findAll();
     }
 }

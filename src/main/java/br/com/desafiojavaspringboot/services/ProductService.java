@@ -1,7 +1,8 @@
 package br.com.desafiojavaspringboot.services;
 
 import br.com.desafiojavaspringboot.entities.Product;
-import br.com.desafiojavaspringboot.vos.ProductVO;
+
+import java.util.List;
 
 public interface ProductService {
     Product save(Product product);
@@ -11,4 +12,6 @@ public interface ProductService {
     Boolean delete(Long id);
 
     Product update(Product product, Long id);
+
+    List<Product> findAll();
 }

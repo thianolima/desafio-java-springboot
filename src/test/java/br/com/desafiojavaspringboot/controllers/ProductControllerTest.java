@@ -1,9 +1,7 @@
 package br.com.desafiojavaspringboot.controllers;
 
-import br.com.desafiojavaspringboot.dtos.ProductDTO;
 import br.com.desafiojavaspringboot.entities.Product;
 import br.com.desafiojavaspringboot.services.ProductService;
-import br.com.desafiojavaspringboot.templates.ProductDTOTemplate;
 import br.com.desafiojavaspringboot.templates.ProductTemplate;
 import br.com.desafiojavaspringboot.templates.ProductVOTemplate;
 import br.com.desafiojavaspringboot.vos.ProductVO;
@@ -24,8 +22,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Optional;
+import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,7 +44,6 @@ public class ProductControllerTest {
     @DisplayName("POST/products - Deve salvar um novo produto.")
     public void insertTest() throws Exception {
         ProductVO vo = ProductVOTemplate.getInstance().getObjectValid();
-        ProductDTO dto = ProductDTOTemplate.getInstance().getObjectValid();
         Product product = ProductTemplate.getInstance().getObjectValid();
 
         BDDMockito.given(service.save(Mockito.any(Product.class))).willReturn(product);
@@ -67,8 +65,29 @@ public class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("GET/products - Deve retornar todos os produtos cadastrados.")
+    public void findByIdTest() throws Exception {
+        List<Product> products = ProductTemplate.getInstance().getListValid();
+
+        BDDMockito.given(service.findAll()).willReturn(products);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(100)))
+                .andExpect(jsonPath("$[0].id").isNotEmpty())
+                .andExpect(jsonPath("$[0].name").isNotEmpty())
+                .andExpect(jsonPath("$[0].description").isNotEmpty())
+                .andExpect(jsonPath("$[0].price").isNotEmpty());
+    }
+
+    @Test
     @DisplayName("GET/products/{id} - Deve retornar produto pelo id.")
-    public void findById() throws Exception {
+    public void findAll() throws Exception {
         Product product = ProductTemplate.getInstance().getObjectValid();
 
         BDDMockito.given(service.findById(Mockito.anyLong())).willReturn(product);
@@ -105,7 +124,6 @@ public class ProductControllerTest {
     @DisplayName("PUT/products/{id} - Deve atualizar um livro.")
     public void updateTest() throws Exception {
         ProductVO vo = ProductVOTemplate.getInstance().getObjectValid();
-        ProductDTO dto = ProductDTOTemplate.getInstance().getObjectValid();
         Product product = ProductTemplate.getInstance().getObjectValid();
 
         Product productUpdate = ProductTemplate.getInstance().getObjectValid();
