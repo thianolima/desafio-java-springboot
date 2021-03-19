@@ -1,6 +1,9 @@
 language: java
-script:
-  - mvnw test
-  - mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 jdk:
-  - oraclejdk8
+  - openjdk8
+  -
+script: ./mvnw clear install
+
+notifications:
+  email: thianolima@hotmail.com
+
