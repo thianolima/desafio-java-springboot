@@ -57,7 +57,7 @@ public class ProductRepositoryTest {
         ProductFilterVO filter = ProductFilterVO.builder()
                 .minPrice(productMin.getPrice())
                 .maxPrice(productMax.getPrice())
-                .q(productMax.getDescription())
+                .q(products.get(0).getName())
                 .build();
 
         List<Product> result = new ArrayList<>();
