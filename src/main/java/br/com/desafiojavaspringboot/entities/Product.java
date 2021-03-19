@@ -25,6 +25,8 @@ public class Product {
     Long id;
 
     String name;
+
     String description;
+
     BigDecimal price;
 }
