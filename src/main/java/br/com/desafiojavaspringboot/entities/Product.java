@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Entity
 @DynamicUpdate
-public class Product {
+public class Product extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
